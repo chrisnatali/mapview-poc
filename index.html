@@ -16,15 +16,15 @@
             "id":  "osm.base"
           },
           {
-			"url": "http://kaduna-tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png",
+			"url": "http://kaduna-tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png?cache_bust={cache_bust}",
             "maxZoom": 18,
-            "attribution": "SEL&amp;Columbia University &copy; <a href=http://sel.columbia.edu>SEL</a>",
+            "attribution": "SEL@Columbia University &copy; <a href=http://sel.columbia.edu>SEL</a>",
             "id":  "gridmaps.kaduna"
           }
         ]
 		</script>
         <script>
-            var map = L.map('map').setView([0.0, 0.0], 13);
+            var map = L.map('map').setView([10.5, 7.4], 9);
             var layers = JSON.parse(document.getElementById('layers').innerHTML);
             // add layers in sorted order
             for(i = 0; i < layers.length; i++) {
@@ -32,7 +32,8 @@
                 L.tileLayer(layer.url, { 
                                attribution: layer.attribution, 
                                maxZoom: layer.maxZoom,
-                               id: layer.id
+                               id: layer.id,
+                               cache_bust:  function() { return Math.random(); }
                            }).addTo(map);
             }
         </script>
