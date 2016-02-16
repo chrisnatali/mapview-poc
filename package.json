@@ -1,0 +1,9 @@
+{
+  "name": "mapview",
+  "version": "0.0.1",
+  "description": "shared and editable map views",
+  "dependencies": {
+    "body-parser": "^1.15.0",
+    "express": "^4.13.4"
+  }
+}

@@ -3,9 +3,19 @@
         <title>MapView POC</title>
         <meta charset="utf-8" />
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+        <style>
+            body {
+                padding: 0;
+                margin: 0;
+            }
+            html, body, #map {
+                height: 100%;
+                width: 100%;
+            }
+        </style>
     </head>
     <body>
-        <div id="map" style="width: 100%; height: 100%"></div>
+        <div id="map"></div>
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
         <script type="application/json" id="layers">
 		[
@@ -16,7 +26,7 @@
             "id":  "osm.base"
           },
           {
-			"url": "http://kaduna-tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png?cache_bust={cache_bust}",
+            "url": "http://kaduna-tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png?cache_bust={cache_bust}",
             "maxZoom": 18,
             "attribution": "SEL@Columbia University &copy; <a href=http://sel.columbia.edu>SEL</a>",
             "id":  "gridmaps.kaduna"
