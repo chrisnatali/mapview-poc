@@ -9,4 +9,4 @@ var views =
     }
 };
 
-exports = views;
+module.exports = views;
