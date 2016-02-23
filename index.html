@@ -45,7 +45,7 @@
             }
 
             // get users recent view
-            var current_view = docCookies.getItem("user_view");
+            var current_view = docCookies.getItem("view") || "base.view";
             
             function setSelectViews(views) {
                 $("#view-selector").find('option').remove(); 
@@ -54,8 +54,14 @@
                 }
             }
             
+            function onCenterZoom(leafletMap) {
+                docCookies.setItem("zoom", leafletMap.getZoom());
+                docCookies.setItem("center_x", leafletMap.getCenter().lng);
+                docCookies.setItem("center_y", leafletMap.getCenter().lat);
+            }
+
             // initialize poc_map
-            var poc_map = map().map_element('map').leaflet(L);
+            var poc_map = map().map_element('map').leaflet(L).onMoveEnd(onCenterZoom);
             var config = {};
 
             // load config
@@ -69,12 +75,18 @@
                  function() { 
                     setSelectViews(poc_map.views()); 
                     $("#view-selector").val(current_view);
-                    poc_map(current_view);
+                    poc_map(current_view, 
+                            docCookies.getItem("center_x"),
+                            docCookies.getItem("center_y"),
+                            docCookies.getItem("zoom"));
                  });
 
             $('#view-selector').change(function() {
                 docCookies.setItem("user_view", $(this).val());
-                poc_map($(this).val());
+                poc_map($(this).val(),
+                            docCookies.getItem("center_x"),
+                            docCookies.getItem("center_y"),
+                            docCookies.getItem("zoom"));
             });
 
         </script>
