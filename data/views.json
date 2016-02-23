@@ -1,0 +1,30 @@
+{
+    "base.view":
+    { 
+        "id": "base.view",
+        "center": {"x": 0.0, "y": 0.0},
+        "zoom": 10,
+        "layers": ["osm.base"]
+    },
+    "kaduna.view":
+    { 
+        "id": "kaduna.view",
+        "center": {"x": 0.0, "y": 0.0},
+        "zoom": 10,
+        "layers": ["osm.base", "gridmaps.kaduna"]
+    },
+    "kano.view":
+    { 
+        "id": "kano.view",
+        "center": {"x": 0.0, "y": 0.0},
+        "zoom": 10,
+        "layers": ["osm.base", "gridmaps.kano"]
+    },
+    "nigeria.view":
+    { 
+        "id": "nigeria.view",
+        "center": {"x": 0.0, "y": 0.0},
+        "zoom": 10,
+        "layers": ["osm.base", "gridmaps.kano", "gridmaps.kaduna"]
+    }
+}

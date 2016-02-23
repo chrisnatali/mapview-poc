@@ -14,85 +14,69 @@
                 height: 100%;
                 width: 100%;
             }
-            #editor-button {
+            #view-selector {
                 position:absolute;
                 top:40px;
                 right:40px;
-                width:50px;
-                height:30px;
-            }
-            #editor-panel{
-                position:absolute;
-                top:80px;
-                right:40px;
-                width:300px;
-                height:200px;
-                display:none;
+                width:200px;
             }
         </style>
     </head>
     <body>
         <div id="map"></div>
-        <button id="editor-button" class="button">Edit</button>
-        <div id="editor-panel" class="container">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                     <span class="panel-title">Editor</span>
-                </div>
-                <div class="panel-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div id="editor">function foo(items) {
-                                var x = "All this is syntax highlighted";
-                                return x;
-                            }
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <select id="view-selector"></select> 
         <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script type="application/json" id="layers">
-		[
-          {
-            "url": "http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            "maxZoom": 18,
-            "attribution": "Map data &copy; <a href=http://openstreetmap.org>OpenStreetMap</a>",
-            "id":  "osm.base"
-          },
-          {
-            "url": "http://kaduna-tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png?cache_bust={cache_bust}",
-            "maxZoom": 18,
-            "attribution": "SEL@Columbia University &copy; <a href=http://sel.columbia.edu>SEL</a>",
-            "id":  "gridmaps.kaduna"
-          }
-        ]
-		</script>
+        <script src="cookies.js"></script>
+        <script src="map.js"></script>
         <script>
-            var map = L.map('map').setView([10.5, 7.4], 9);
-            var layers = JSON.parse(document.getElementById('layers').innerHTML);
-            // add layers in sorted order
-            for(i = 0; i < layers.length; i++) {
-                layer = layers[i];
-                L.tileLayer(layer.url, { 
-                               attribution: layer.attribution, 
-                               maxZoom: layer.maxZoom,
-                               id: layer.id,
-                               cache_bust:  function() { return Math.random(); }
-                           }).addTo(map);
+            // push to utils js
+            function wait(test, callback) {
+                // Check if condition met. If not, re-check later (200 msec).
+                if (!test()) {
+                    setTimeout(wait, 200, test, callback);
+                } else { 
+                    callback();
+                }
+            } 
+            
+            function validMap(p_map) { 
+                return p_map.layers() instanceof Object && p_map.views() instanceof Object;
             }
-        </script>
-        <script>
-            var panel = $('#editor-panel');
 
-            $("#editor-button").on('click', function () {
-                panel.toggle();
-                $(this).text(function (i, text) {
-                        return text === "Edit" ? "Hide" : "Edit";
-                });
+            // get users recent view
+            var current_view = docCookies.getItem("user_view");
+            
+            function setSelectViews(views) {
+                $("#view-selector").find('option').remove(); 
+                for(view in views) {
+                    $("#view-selector").append('<option value=' + view + '>' + view + '</option>');
+                }
+            }
+            
+            // initialize poc_map
+            var poc_map = map().map_element('map').leaflet(L);
+            var config = {};
+
+            // load config
+            $.getJSON("config.json", function(data) {
+                $.getJSON(data['layers_json_url'], function(layers) { poc_map.layers(layers); });
+                $.getJSON(data['views_json_url'], function(views) { poc_map.views(views); });
             });
+            
+            // once config is loaded, render map
+            wait(function() { return validMap(poc_map); }, 
+                 function() { 
+                    setSelectViews(poc_map.views()); 
+                    $("#view-selector").val(current_view);
+                    poc_map(current_view);
+                 });
+
+            $('#view-selector').change(function() {
+                docCookies.setItem("user_view", $(this).val());
+                poc_map($(this).val());
+            });
+
         </script>
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
