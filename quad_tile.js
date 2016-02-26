@@ -18,13 +18,13 @@ var y2lat = function(y) {
 var tile = function(x, y) {
     var tile = 0;
     var mask = Math.pow(2, 15);
-    var test = Math.pow(2, 16);
+    // keep track of the shift we need to apply to
+    // x and y to interleave in tile
+    var shift_left = 16;
     while(mask > 0) {
-        console.log((test | mask).toString(2));
-        tile = (mask & x) | tile;
-        mask >>= 1;
-        console.log((test | mask).toString(2));
-        tile = (mask & y) | tile;
+        tile = ((mask & x) << shift_left) | tile;
+        shift_left--;
+        tile = ((mask & y) << shift_left) | tile;
         mask >>= 1;
     }
     return tile;
@@ -34,11 +34,16 @@ var x_y = function(tile) {
     var x = 0,
         y = 0;
 
-    var mask = Math.pow(2, 15);
+    var mask = Math.pow(2, 31);
+    var shift_right = 16;
+    // note that we use `>>>` to shift in 0's from the left
+    // as these are treated as signed numbers without that
     while(mask > 0) {
-        x = (mask & tile) | x;
-        y = ((mask >> 2) & tile) | y;
-        mask >>= 1;
+        x = ((mask & tile) >>> shift_right) | x;
+        shift_right--;
+        mask >>>= 1;
+        y = ((mask & tile) >>> shift_right) | y;
+        mask >>>= 1;
     }
     return [x, y];
 }
