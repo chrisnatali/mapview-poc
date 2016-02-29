@@ -17,6 +17,61 @@ var y2lat = function(y) {
 
 var tile = function(x, y) {
     var tile = 0;
+    // walk the 16 bits of x and y, shifting them
+    // into proper interleaved position of the tile
+    for(var i = 15; i >= 0; i--) {
+        tile = (tile << 1) | ((x >> i) & 1);
+        tile = (tile << 1) | ((y >> i) & 1);
+    }
+    return tile;
+}
+   
+
+var x_y = function(tile) {
+    // walk the 32 bits of the tile, shifting them
+    // into proper position of x and y 
+    var x = 0;
+    var y = 0;
+    for(var i = 31; i >= 0; i--) {
+        x = (x << 1) | ((tile >> i) & 1);
+        i--;
+        y = (y << 1) | ((tile >> i) & 1);
+    }
+    return [x, y];
+}
+ 
+var bounds2tiles = function(minlon, minlat, maxlon, maxlat) {
+    minx = lon2x(minlon);
+    miny = lat2y(minlat);
+    maxx = lon2x(maxlon);
+    maxy = lat2y(maxlat);
+
+    var numx = (maxx - minx) + 1;
+    var numy = (maxy - miny) + 1;
+
+    var tiles = new Array(numx * numy);
+    for(var x = 0; x < numx; x++) {
+        for(var y = 0; y < numy; y++) {
+            //row-order from left->right, bottom->top
+            tiles[x + (numx*y)] = tile(minx + x, miny + y);
+        }
+    }
+    return tiles;
+}
+
+var num_tiles = function(minlon, minlat, maxlon, maxlat) {
+    minx = lon2x(minlon);
+    miny = lat2y(minlat);
+    maxx = lon2x(maxlon);
+    maxy = lat2y(maxlat);
+
+    var numx = (maxx - minx) + 1;
+    var numy = (maxy - miny) + 1;
+    return numx * numy;
+}
+
+var tile2 = function(x, y) {
+    var tile = 0;
     var mask = Math.pow(2, 15);
     // keep track of the shift we need to apply to
     // x and y to interleave in tile
@@ -29,8 +84,8 @@ var tile = function(x, y) {
     }
     return tile;
 }
-   
-var x_y = function(tile) {
+
+var x_y2 = function(tile) {
     var x = 0,
         y = 0;
 
@@ -66,5 +121,7 @@ exports.x2lon=x2lon;
 exports.y2lat=y2lat;
 exports.tile=tile;
 exports.x_y=x_y;
+exports.bounds2tiles=bounds2tiles;
+exports.num_tiles=num_tiles;
 exports.lat_lon2tile=lat_lon2tile;
 exports.tile2lat_lon=tile2lat_lon;
