@@ -15,7 +15,7 @@
     },
     "gridmaps.kano":
     {
-        "url": "http://tiles.gridmaps.org:20008/tile/gridmaps/{z}/{x}/{y}.png?cache_bust={cache_bust}",
+        "url": "http://tiles.gridmaps.org:20008/tile/oync-default/{z}/{x}/{y}.png?cache_bust={cache_bust}",
         "maxZoom": 18,
         "attribution": "SEL@Columbia University &copy; <a href=http://sel.columbia.edu>SEL</a>",
         "id":  "gridmaps.kano"
